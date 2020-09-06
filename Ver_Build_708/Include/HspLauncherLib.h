@@ -1,0 +1,187 @@
+/**
+ @File	HspLauncherLib.h
+ @brief	HspLauncherLib 헤더파일.
+
+ (C) Copyright 2005. Ahn Lab, Inc.\n
+ Any part of this source code can not be copied with\n
+ any method without prior written permission from\n
+ the author or authorized person.\n
+ \n
+*/
+
+#ifndef _HSPLAUNCHERLIB_H
+#define _HSPLAUNCHERLIB_H
+
+// HShield Pro Library Version Info
+#define	HSPRO_VERSION(w,x,y,z)		(w) <<24|(x&0xFF)<<16|(y&0xFF)<<8|(z&0xFF)
+#define HSHIELDPRO_LLIB_VER		    HSPRO_VERSION(1,0,0,12)
+
+// 에러코드 정의.
+#define ERROR_HSPLAUNCHERLIB_BASECODE						0x0004B000
+
+#define ERROR_STARTLAUNCHER_INVALIDPARAM					ERROR_HSPLAUNCHERLIB_BASECODE + 0x01
+#define ERROR_STARTLAUNCHER_MAKEMEMMAPNAME_FAIL				ERROR_HSPLAUNCHERLIB_BASECODE + 0x02
+#define ERROR_STARTLAUNCHER_CREATEPROCESS					ERROR_HSPLAUNCHERLIB_BASECODE + 0x03
+#define ERROR_STARTLAUNCHER_SHAREMEMINIT_FAIL				ERROR_HSPLAUNCHERLIB_BASECODE + 0x04
+#define ERROR_STARTLAUNCHER_WAITEVENT_FAIL					ERROR_HSPLAUNCHERLIB_BASECODE + 0x05
+#define ERROR_STARTLAUNCHER_LAUNCHERSTART_OK				ERROR_HSPLAUNCHERLIB_BASECODE + 0x07
+#define ERROR_STARTLAUNCHER_ALEADYSTART						ERROR_HSPLAUNCHERLIB_BASECODE + 0x09
+#define ERROR_STARTLAUNCHER_GETEXITCODE						ERROR_HSPLAUNCHERLIB_BASECODE + 0x0A
+#define ERROR_STARTLAUNCHER_RCV_RESULT						ERROR_HSPLAUNCHERLIB_BASECODE + 0x0B
+#define ERROR_STARTLAUNCHER_INVALIDSESSION					ERROR_HSPLAUNCHERLIB_BASECODE + 0x0C
+
+#define ERROR_MAKEREQSESSION_INVALIDPARAM					ERROR_HSPLAUNCHERLIB_BASECODE + 0x10
+#define ERROR_MAKEREQSESSION_WAITEVENT_FAIL					ERROR_HSPLAUNCHERLIB_BASECODE + 0x11
+#define ERROR_MAKEREQSESSION_MAKESESSIONKEY_FAIL			ERROR_HSPLAUNCHERLIB_BASECODE + 0x12
+#define ERROR_MAKEREQSESSION_INITCRYPT_FAIL					ERROR_HSPLAUNCHERLIB_BASECODE + 0x13
+#define ERROR_MAKEREQSESSION_ENCRYPT_FAIL					ERROR_HSPLAUNCHERLIB_BASECODE + 0x14
+#define ERROR_MAKEREQSESSION_SHAREMEMINIT_FAIL				ERROR_HSPLAUNCHERLIB_BASECODE + 0x15
+#define ERROR_MAKEACKSESSION_INVALIDSESSION					ERROR_HSPLAUNCHERLIB_BASECODE + 0x16
+#define ERROR_MAKEACKSESSION_SESSION_OK						ERROR_HSPLAUNCHERLIB_BASECODE + 0x17
+#define ERROR_MAKEACKSESSION_RCV_RESULT						ERROR_HSPLAUNCHERLIB_BASECODE + 0x18
+#define ERROR_MAKEREQSESSION_SETEVENT_FAIL					ERROR_HSPLAUNCHERLIB_BASECODE + 0x19
+
+#define ERROR_STARTGAME_INVALIDPARAM						ERROR_HSPLAUNCHERLIB_BASECODE + 0x28
+#define ERROR_STARTGAME_MAKEFILEKEY_FAIL					ERROR_HSPLAUNCHERLIB_BASECODE + 0x29 
+#define ERROR_STARTGAME_SHAREMEMINIT_FAIL					ERROR_HSPLAUNCHERLIB_BASECODE + 0x2A
+#define ERROR_STARTGAME_WAITEVENT_FAIL						ERROR_HSPLAUNCHERLIB_BASECODE + 0x2B
+#define ERROR_STARTGAME_GAMESTART_OK						ERROR_HSPLAUNCHERLIB_BASECODE + 0x2D
+#define ERROR_STARTGAME_INITCRYPT_FAIL						ERROR_HSPLAUNCHERLIB_BASECODE + 0x2F
+#define ERROR_STARTGAME_ENCRYPT_FAIL						ERROR_HSPLAUNCHERLIB_BASECODE + 0x40
+#define ERROR_STARTGAME_HSPL_NOTEXEC						ERROR_HSPLAUNCHERLIB_BASECODE + 0x41
+#define ERROR_STARTGAME_GETEXITCODE							ERROR_HSPLAUNCHERLIB_BASECODE + 0x42
+
+#define ERROR_GETVERSION_INVALIDPARAM						ERROR_HSPLAUNCHERLIB_BASECODE + 0x50
+#define ERROR_GETVERSION_CREATEFILE							ERROR_HSPLAUNCHERLIB_BASECODE + 0x51
+#define ERROR_GETVERSION_SETFILEPOINTER						ERROR_HSPLAUNCHERLIB_BASECODE + 0x52
+#define ERROR_GETVERSION_SETFILEPOINTER						ERROR_HSPLAUNCHERLIB_BASECODE + 0x52
+
+#define ERROR_STRING_CONVERSION_FAILED						ERROR_HSPLAUNCHERLIB_BASECODE + 0x60
+
+
+
+
+
+#define MAX_PATH_LEN			1024
+#define FILE_VERSION_LEN		8
+
+#pragma pack(push)
+#pragma pack(8)
+/**
+ @brief 게임실행에 필요한 정보를 정의한 구조체
+*/
+
+typedef struct _AHN_GAMEEXECINFOA
+{
+	CHAR szFilePath[MAX_PATH_LEN];			        //< 실행할 파일 전체경로. 
+	CHAR szCommandLine[MAX_PATH_LEN];				//< 실행에 필요한 정보. 
+} AHN_GAMEEXECINFOA, *PAHN_GAMEEXECINFOA;
+
+typedef struct _AHN_GAMEEXECINFOW
+{
+	WCHAR szFilePath[MAX_PATH_LEN];			        //< 실행할 파일 전체경로. 
+	WCHAR szCommandLine[MAX_PATH_LEN];				//< 실행에 필요한 정보. 
+} AHN_GAMEEXECINFOW, *PAHN_GAMEEXECINFOW;
+#if defined(UNICODE) | defined(_UNICODE)
+	#define AHN_GAMEEXECINFO	AHN_GAMEEXECINFOW
+#else
+	#define AHN_GAMEEXECINFO	AHN_GAMEEXECINFOA
+#endif
+
+#pragma pack(pop)
+
+#if defined(__cplusplus)
+extern "C"
+{
+#endif
+	
+/*!
+ * 
+ * @remarks	핵쉴드 런처를 시작한다.
+*
+ * @param	szHspLauncherPath : [IN] 핵쉴드런처 전체경로.
+ *
+ * @retval	ERROR_SUCCESS : 핵쉴드 런처실행 성공.
+ * @retval	ERROR_STARTLAUNCHER_INVALIDPARAM : 잘못된 파라메터 입력.
+ * @retval	ERROR_STARTLAUNCHER_ALEADYSTART : 핵쉴드런처가 이미 시작되었음.
+ * @retval	ERROR_STARTLAUNCHER_GETEXITCODE : 핵쉴드런처 동작유무 확인실패.
+ * @retval	ERROR_STARTLAUNCHER_MAKEMEMMAPNAME_FAIL : 메모리맵 이름생성 실패.
+ * @retval	ERROR_STARTLAUNCHER_CREATEPROCESS : 핵쉴드런처 프로세스 생성 실패.
+ * @retval	ERROR_STARTLAUNCHER_SHAREMEMINIT_FAIL : 공유 메모리맵 초기화 실패.
+ * @retval	ERROR_STARTLAUNCHER_WAITEVENT_FAIL : 이벤트 대기시간 초과.
+ * @retval	그밖의 Win32 Error Codes : 실패시
+ *
+ * @attention	
+ *
+ */
+DWORD
+__stdcall
+_AhnHsp_StartLauncherA (
+		IN LPCSTR szHspLauncherPathA
+		);
+DWORD
+__stdcall
+_AhnHsp_StartLauncherW (
+		IN LPCWSTR szHspLauncherPathW
+		);
+#if defined(UNICODE) | defined(_UNICODE)
+#define _AhnHsp_StartLauncher	_AhnHsp_StartLauncherW
+#else
+#define _AhnHsp_StartLauncher   _AhnHsp_StartLauncherA
+#endif
+
+/*!
+ * 
+ * @remarks	핵쉴드 런처를 통해 게임클라이언트를 실행한다.
+ *
+ * @param	pAhnGameExecInfo : [IN]실행 파일의 정보.
+ *
+ * @retval	ERROR_SUCCESS : 게임 클라이언트 실행 성공.
+ * @retval	ERROR_STARTGAME_INVALIDPARAM : 잘못된 파라메터 입력.
+ * @retval	ERROR_STARTGAME_HSPL_NOTEXEC : 핵쉴드런처가 동작하고 있지않다.
+ * @retval	ERROR_STARTGAME_GETEXITCODE : 핵쉴드런처 동작유무 확인실패.
+ * @retval	ERROR_STARTGAME_SHAREMEMINIT_FAIL : 매모리맵 초기화 실패.
+ * @retval	ERROR_STARTGAME_MAKEFILEKEY_FAIL : 세션키 생성 실패.
+ * @retval	ERROR_STARTGAME_INITCRYPT_FAIL : 암/복호화 초기화에 실패.
+ * @retval	ERROR_STARTGAME_WAITEVENT_FAIL : 이벤트 대기 실패.
+ * @retval	ERROR_STARTGAME_ENCRYPT_FAIL : 데이터 암호화에 실패.
+ * @retval	그밖의 Win32 Error Codes : 실패시
+ *
+ * @attention	
+ *
+ */
+DWORD
+__stdcall
+_AhnHsp_StartGameA (
+		IN PAHN_GAMEEXECINFOA pAhnGameExecInfoA 
+		);
+DWORD
+__stdcall
+_AhnHsp_StartGameW (
+		IN PAHN_GAMEEXECINFOW pAhnGameExecInfoW
+		);
+#if defined(UNICODE) | defined(_UNICODE)
+	#define _AhnHsp_StartGame	_AhnHsp_StartGameW
+#else
+	#define _AhnHsp_StartGame	_AhnHsp_StartGameA
+#endif
+
+
+/*!
+ * 
+ * @remarks	핵쉴드 런처의 프로세스핸들을 종료한다.
+ *
+ * @param	없음.
+ *
+ * @retval	없음.
+ * @attention	
+ *
+ */
+void __stdcall _AhnHsp_CloseHandle();
+
+#if defined(__cplusplus)
+}
+
+#endif //(__cplusplus)
+
+#endif //_HSPLAUNCHERLIB_H

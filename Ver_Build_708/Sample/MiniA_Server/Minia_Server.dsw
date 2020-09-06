@@ -1,0 +1,59 @@
+Microsoft Developer Studio Workspace File, Format Version 6.00
+# WARNING: DO NOT EDIT OR DELETE THIS WORKSPACE FILE!
+
+###############################################################################
+
+Project: "Minia_Server"=.\Minia_Server.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name AntiCpSvr
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name AntiCpXSvr
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "AntiCpSvr"=..\..\OptionPack\AntiCpSvr\AntiCpSvr.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "AntiCpXSvr"=..\..\OptionPack\AntiCpXSvr\AntiCpXSvr.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Global:
+
+Package=<5>
+{{{
+}}}
+
+Package=<3>
+{{{
+}}}
+
+###############################################################################
+
